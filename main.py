@@ -1,4 +1,4 @@
-import streamlit as st
+"""import streamlit as st
 from tool.image_processor import batch_process_images
 
 
@@ -29,3 +29,14 @@ elif menu == "PDF 合并工具":
 elif menu == "账单分析仪":
     st.title("💰 账单分析仪")
     st.write("这里将集成你之前的账单分析逻辑...")
+    """
+import streamlit as st
+from tool.image_tool import run_image_tool
+
+st.sidebar.title("🛠️ Python 工具箱")
+choice = st.sidebar.selectbox("请选择工具", ["首页", "图片水印工具"])
+
+if choice == "首页":
+    st.title("欢迎使用我的工具箱")
+elif choice == "图片水印工具":
+    run_image_tool()
