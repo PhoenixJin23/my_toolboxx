@@ -65,7 +65,7 @@ def run_classify():
     st.info("提示：本工具将扫描目标文件夹，根据文件后缀进行分类")
 
     #用户输入
-    target_dir=st.text_input("目标文件夹","请输入待分类的文件夹地址")
+    target_dir=st.text_input("目标文件夹","eg:C:/Users/g3472/Desktop/cutiemice")
 
     #开始执行
     if st.button("开始分类","primary"):
