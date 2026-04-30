@@ -72,7 +72,9 @@ def run_image_tool():
                 l_img=Image.open(l_path).convert("RGBA")
 
     with c3:
-        out_format=st.selectbox("输出格式",["保持原样",".webp",".jpg",".png"])
+        out_format=st.selectbox("输出格式",["保持原样",".webp",".jpg",".png",".pdf"])
+
+
 
     #C.执行处理
     if st.button("🚀 开始批量处理",type="primary"): #type="primary"让按钮使用主题的“主色”，让它成为页面里最显眼的按钮
@@ -96,6 +98,7 @@ def run_image_tool():
         files=[f for f in os.listdir(input_dir) if f.lower().endswith(('.png','.jpg','.jpeg','.bmp'))]
 
         progress_bar=st.progress(0) #创建一个进度条，初始进度为0
+        processed_images_for_pdf=[]
         for i,filename in enumerate(files):
         #i是更新进度条必需元素，enumerate会自动给files里的文件从0开始依次编号
         #不能for i,filename in files:Python不知道i是什么
@@ -104,26 +107,36 @@ def run_image_tool():
                 with Image.open(img_path) as img:
                     #调用处理逻辑
                     processed_img=process_single_image(img,settings)
-                    #处理文件名和格式
-                    name_without_ext=os.path.splitext(filename)[0]
-                    if out_format=="保持原样":
-                        final_ext=os.path.splitext(filename)[1]
+                    if out_format=='.pdf': #PDF需要RGB模式，先存进列表
+                        processed_images_for_pdf.append(processed_img.convert("RGB"))
                     else:
-                        final_ext=out_format
+                        name_without_ext=os.path.splitext(filename)[0]
+                        if out_format=="保持原样":
+                            final_ext=os.path.splitext(filename)[1]
+                        else:
+                            final_ext=out_format
 
-                    save_path=os.path.join(output_dir,name_without_ext+final_ext)
+                        save_path=os.path.join(output_dir,name_without_ext+final_ext)
 
-                    #如果是JPG，需要转成RGB模式（防止透明度报错）
-                    if final_ext.lower() in ['.jpg','.jpeg']:
-                        processed_img=processed_img.convert("RGB")
-
-                    processed_img.save(save_path)
+                        #如果是JPG，需要转成RGB模式（防止透明度报错）
+                        if final_ext.lower() in ['.jpg','.jpeg']:
+                            processed_img=processed_img.convert("RGB")
+                        processed_img.save(save_path)
 
                 progress_bar.progress((i+1)/len(files)) #更新进度
             except Exception as e:
                 st.warning(f"跳过文件{filename}:{e}")
 
-        st.success(f"🎉 处理完成！共处理{len(files)}张图片")
+        if out_format=='.pdf' and processed_images_for_pdf:
+            image_combined_pdf=st.text_input("请输入合并后的PDF名","eg:image_combined_pdf")
+            pdf_output_path=os.path.join(output_dir,image_combined_pdf)
+            processed_images_for_pdf[0].save(
+                pdf_output_path,
+                save_all=True,
+                append_images=processed_images_for_pdf[1:]
+            )
+
+            st.success(f"🎉 处理完成！共处理{len(files)}张图片")
 
 
 
