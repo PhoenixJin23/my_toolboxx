@@ -74,6 +74,11 @@ def run_image_tool():
     with c3:
         out_format=st.selectbox("输出格式",["保持原样",".webp",".jpg",".png",".pdf"])
 
+        pdf_filename="combined_images.pdf" #默认名
+        if out_format==".pdf":
+            pdf_filename=st.text_input("PDF文件名","eg:my_images.pdf")
+            if not pdf_filename.endswith(".pdf"): #避免输入漏掉extension
+                pdf_filename+=".pdf"
 
 
     #C.执行处理
@@ -95,7 +100,7 @@ def run_image_tool():
             'font_size':24
         }
 
-        files=[f for f in os.listdir(input_dir) if f.lower().endswith(('.png','.jpg','.jpeg','.bmp'))]
+        files=[f for f in os.listdir(input_dir) if f.lower().endswith(('.png','.jpg','.jpeg','.bmp','.webp'))]
 
         progress_bar=st.progress(0) #创建一个进度条，初始进度为0
         processed_images_for_pdf=[]
@@ -107,9 +112,10 @@ def run_image_tool():
                 with Image.open(img_path) as img:
                     #调用处理逻辑
                     processed_img=process_single_image(img,settings)
-                    if out_format=='.pdf': #PDF需要RGB模式，先存进列表
+                    if out_format=='.pdf': #PDF需要RGB模式，先存进列表，不保存
                         processed_images_for_pdf.append(processed_img.convert("RGB"))
                     else:
+                        #非PDF模式，直接保存
                         name_without_ext=os.path.splitext(filename)[0]
                         if out_format=="保持原样":
                             final_ext=os.path.splitext(filename)[1]
@@ -127,16 +133,24 @@ def run_image_tool():
             except Exception as e:
                 st.warning(f"跳过文件{filename}:{e}")
 
+
+        #循环结束后。处理PDF保存
         if out_format=='.pdf' and processed_images_for_pdf:
-            image_combined_pdf=st.text_input("请输入合并后的PDF名","eg:image_combined_pdf")
-            pdf_output_path=os.path.join(output_dir,image_combined_pdf)
+            pdf_output_path=os.path.join(output_dir,pdf_filename)
             processed_images_for_pdf[0].save(
                 pdf_output_path,
                 save_all=True,
                 append_images=processed_images_for_pdf[1:]
             )
-
+            st.success(f"🎉 已成功合并为 PDF: {pdf_filename}")
+            st.balloons()
+        elif out_format!=".pdf":
             st.success(f"🎉 处理完成！共处理{len(files)}张图片")
+
+
+
+#复盘：出现问题----把st.text_input()放进了st.button()里，导致脚本重复从头运行
+#对策：在Streamlit中，所有的参数收集（输入框、下拉框）都放在“开始执行”按钮之前。
 
 
 
