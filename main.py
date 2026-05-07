@@ -4,6 +4,7 @@ from tool.pdf_tool import run_pdf_tool
 from tool.classify import run_classify
 from tool.folder_analyzer import run_folder_analyzer
 from tool.file_rename import run_obfuscator
+from tool.bill_merger import run_bill_converter
 
 
 
@@ -11,7 +12,7 @@ from tool.file_rename import run_obfuscator
 st.sidebar.title("🛠️ Python 万能工具箱")
 menu = st.sidebar.radio(
     "请选择一个工具：",
-    ("首页介绍", "图片处理助手", "PDF合并工具", "文件混淆小兵","文件分类器","文件夹空间扫描仪","账单分析仪")
+    ("首页介绍", "图片处理助手", "PDF合并工具", "文件混淆小兵","文件分类器","文件夹空间扫描仪","账单合并器")
 )
 
 # 2. 根据菜单选择，显示不同的内容
@@ -32,9 +33,10 @@ elif menu == "文件分类器":
 elif menu == "文件夹空间扫描仪":
     run_folder_analyzer()
 
-elif menu == "账单分析仪":
-    st.title("💰 账单分析仪")
+elif menu == "账单合并器":
+    st.title("💰 账单合并器")
     st.info("这里集成了账单分析逻辑...")
+    run_bill_converter()
 
 elif menu == "文件混淆小兵":
     st.title("🔒 文件混淆小兵")
