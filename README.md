@@ -20,6 +20,7 @@ Cause the players gonna play play play, and the haters gonna hate hate hate, bab
 
 
 爱的流动态
+鍾意呢個director啊！！！
 
 
 ``` catelogs
