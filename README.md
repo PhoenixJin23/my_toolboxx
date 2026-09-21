@@ -26,3 +26,4 @@ file_rename: 指定钥匙放置的位置
 | image_tool.py      | image_processor_or.py | Batch resize images and add watermark                       |
 | pdf_tool.py        | pdf_tool_or.py        | A simple PDF merging and encryption tool                    |
 
+今日全部蔬菜特價啦，快啲嚟睇吓啦
